@@ -1,5 +1,3 @@
-Voy a estructurarte una **clase completa** como si fuera un módulo de estudio, organizada progresivamente y conectada directamente con tu proyecto. La idea es que no solo entiendas cada tema, sino cómo encajan entre sí.
-
 ---
 
 # CLASE: DESARROLLO WEB CON C# + ASP.NET MVC + EF CORE + MYSQL
@@ -315,20 +313,9 @@ Todo el sistema funciona así:
 
 # CONCLUSIÓN
 
-Si entiendes este flujo:
-
 * Modelos → DB
 * Controller → lógica
 * View → presentación
 * EF → puente
 
-Entonces ya no estás “usando herramientas”, estás entendiendo el sistema.
-
 ---
-
-Si quieres profundizar de verdad, el siguiente paso sería:
-
-* darte ejercicios sobre tu propio proyecto
-* o hacerte preguntas técnicas para validar qué tanto dominas cada capa
-
-Eso ya sería un entrenamiento más serio.
