@@ -1,0 +1,723 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 1rem 0; }
+.header { margin-bottom: 1.5rem; }
+.header h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.header p { font-size: 14px; color: var(--color-text-secondary); }
+.nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.nav-btn { font-size: 12px; padding: 5px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+.nav-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.nav-btn.active { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; font-weight: 500; }
+.topic-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; }
+.topic-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.topic-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); margin-bottom: 1rem; }
+.badge-base { background: #E6F1FB; color: #0C447C; }
+.badge-oop { background: #E1F5EE; color: #085041; }
+.badge-mvc { background: #FAEEDA; color: #633806; }
+.badge-razor { background: #FBEAF0; color: #72243E; }
+.badge-ef { background: #EEEDFE; color: #3C3489; }
+.badge-sql { background: #FAECE7; color: #712B13; }
+.badge-flow { background: #EAF3DE; color: #27500A; }
+.badge-valid { background: #FCEBEB; color: #791F1F; }
+.section { margin-bottom: 1.25rem; }
+.section-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+.concept-chip { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 10px; font-size: 13px; color: var(--color-text-primary); cursor: pointer; transition: all 0.15s; }
+.concept-chip:hover { border-color: var(--color-border-secondary); background: var(--color-background-primary); }
+.concept-chip.selected { border-color: #7F77DD; background: #EEEDFE; color: #3C3489; }
+.code-block { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--color-text-primary); white-space: pre; overflow-x: auto; margin-bottom: 1rem; }
+.explanation { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 1rem; }
+.explanation strong { color: var(--color-text-primary); font-weight: 500; }
+.detail-box { display: none; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 1rem; margin-top: 1rem; }
+.detail-box.visible { display: block; }
+.ask-btn { width: 100%; padding: 8px; border: 0.5px solid #7F77DD; border-radius: var(--border-radius-md); background: transparent; color: #534AB7; font-size: 13px; cursor: pointer; margin-top: 8px; }
+.ask-btn:hover { background: #EEEDFE; }
+.relation-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.relation-row:last-child { border-bottom: none; }
+.tag { font-family: var(--font-mono); font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--color-background-secondary); color: var(--color-text-secondary); }
+.arrow { color: var(--color-text-secondary); }
+.progress-bar { height: 3px; background: var(--color-background-secondary); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
+.progress-fill { height: 100%; background: #7F77DD; border-radius: 2px; transition: width 0.3s; }
+.steps { counter-reset: step; }
+.step { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
+.step-num { min-width: 22px; height: 22px; border-radius: 50%; background: #EEEDFE; color: #534AB7; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h2>Guía de estudio — C# y ASP.NET MVC</h2>
+    <p>Selecciona un tema para ver conceptos, código de ejemplo y profundizar.</p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width: 11%"></div></div>
+
+  <div class="nav" id="nav">
+    <button class="nav-btn active" onclick="showTopic(0)">1. Fundamentos C#</button>
+    <button class="nav-btn" onclick="showTopic(1)">2. OOP</button>
+    <button class="nav-btn" onclick="showTopic(2)">3. ASP.NET MVC</button>
+    <button class="nav-btn" onclick="showTopic(3)">4. Razor</button>
+    <button class="nav-btn" onclick="showTopic(4)">5. Entity Framework</button>
+    <button class="nav-btn" onclick="showTopic(5)">6. Bases de datos</button>
+    <button class="nav-btn" onclick="showTopic(6)">7. EF ↔ SQL</button>
+    <button class="nav-btn" onclick="showTopic(7)">8. Flujo CRUD</button>
+    <button class="nav-btn" onclick="showTopic(8)">9. Validaciones</button>
+  </div>
+
+  <div id="topic-area"></div>
+</div>
+
+<script>
+const topics = [
+  {
+    id: 0,
+    title: "Fundamentos de C#",
+    badge: "badge-base",
+    badgeText: "Base obligatoria",
+    intro: "Son los bloques con los que construyes todo lo demás. Si ves código C# y no reconoces estos elementos, nada más tiene sentido.",
+    concepts: [
+      { name: "Tipos de datos", code: `int edad = 25;
+string nombre = "Juan";
+bool activo = true;
+DateTime fechaNacimiento = DateTime.Now;`, explain: "<strong>int</strong> = número entero. <strong>string</strong> = texto. <strong>bool</strong> = verdadero/falso. <strong>DateTime</strong> = fecha y hora. En tu proyecto, <code>Loan</code> usa <code>DateTime LoanDate</code> y <code>bool IsReturned</code>." },
+      { name: "Clases y objetos", code: `// Clase = molde/plantilla
+public class Book {
+    public int BookId { get; set; }
+    public string Title { get; set; }
+}
+
+// Objeto = instancia concreta
+Book libro = new Book();
+libro.Title = "Don Quijote";`, explain: "Una <strong>clase</strong> define la estructura. Un <strong>objeto</strong> es una copia concreta creada con <code>new</code>. En tu biblioteca: <code>Book</code>, <code>User</code>, <code>Loan</code> son las clases." },
+      { name: "Propiedades get; set;", code: `public class User {
+    public int UserId { get; set; }      // EF lo usa como PK
+    public string Name { get; set; }     // lectura y escritura
+    public string Email { get; private set; } // solo se escribe internamente
+}`, explain: "<code>get</code> permite leer el valor. <code>set</code> permite escribirlo. Entity Framework <strong>requiere</strong> ambos en los modelos para poder mapear a la base de datos." },
+      { name: "Nullable types", code: `// Sin nullable: DEBE tener valor
+string nombre = null; // Warning en C# moderno
+
+// Con nullable: puede ser null
+string? nombre = null; // OK
+int? numero = null;    // OK
+
+// Uso seguro con ??
+string mostrar = nombre ?? "Sin nombre";`, explain: "El <code>?</code> después del tipo significa que <strong>puede ser nulo</strong>. En tu proyecto, campos opcionales como <code>ReturnDate?</code> en <code>Loan</code> usan esto." },
+      { name: "List<T>", code: `// Lista de libros
+List<Book> libros = new List<Book>();
+libros.Add(new Book { Title = "Clean Code" });
+libros.Add(new Book { Title = "Pragmatic Dev" });
+
+// Acceder
+int cantidad = libros.Count;
+Book primero = libros[0];`, explain: "<code>List&lt;T&gt;</code> es una colección dinámica. El <code>T</code> es el tipo de dato que contiene. En EF, <code>ICollection&lt;Loan&gt;</code> en tu modelo <code>User</code> representa todos sus préstamos." },
+      { name: "LINQ básico", code: `var libros = _context.Books.ToList();
+
+// Where = filtrar
+var disponibles = libros.Where(b => b.IsAvailable == true);
+
+// FirstOrDefault = primero o null
+var libro = libros.FirstOrDefault(b => b.BookId == 1);
+
+// ToList = ejecutar y traer lista
+var activos = _context.Loans
+    .Where(l => !l.IsReturned)
+    .ToList();`, explain: "<strong>LINQ</strong> es lenguaje de consulta sobre colecciones. <code>Where</code> filtra. <code>FirstOrDefault</code> trae el primero que cumpla (o null). <code>ToList()</code> ejecuta la consulta." },
+    ],
+    askPrompts: [
+      "Explícame la diferencia entre int y int? con un ejemplo de mi proyecto",
+      "¿Cómo funciona LINQ internamente? ¿Cuándo se ejecuta la consulta?",
+    ]
+  },
+  {
+    id: 1,
+    title: "Programación orientada a objetos",
+    badge: "badge-oop",
+    badgeText: "OOP",
+    intro: "Tu proyecto de biblioteca es un ejemplo perfecto de OOP. Cada entidad del mundo real (usuario, libro, préstamo) se convierte en una clase con su propia responsabilidad.",
+    concepts: [
+      { name: "Encapsulación", code: `public class Loan {
+    // Datos encapsulados dentro de la clase
+    public int LoanId { get; set; }
+    public DateTime LoanDate { get; set; }
+    public bool IsReturned { get; set; }
+
+    // La lógica de negocio está aquí, no afuera
+    public bool EstaVencido() {
+        return !IsReturned && LoanDate.AddDays(14) < DateTime.Now;
+    }
+}`, explain: "Encapsulación = los datos y la lógica relacionada viven <strong>juntos dentro de la clase</strong>. El mundo exterior no necesita saber cómo funciona por dentro, solo usa los métodos y propiedades públicas." },
+      { name: "Modelos de dominio", code: `// Cada clase representa algo del mundo real
+public class User {
+    public int UserId { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    // Relación: un usuario tiene muchos préstamos
+    public ICollection<Loan> Loans { get; set; }
+}
+
+public class Book {
+    public int BookId { get; set; }
+    public string Title { get; set; }
+    public bool IsAvailable { get; set; }
+    public ICollection<Loan> Loans { get; set; }
+}`, explain: "Los modelos de dominio representan las <strong>entidades del negocio</strong>. En una biblioteca: usuarios, libros y préstamos. Entity Framework los convierte en tablas de base de datos." },
+      { name: "Relaciones entre objetos", code: `public class Loan {
+    public int LoanId { get; set; }
+
+    // FK hacia User
+    public int UserId { get; set; }
+    public User User { get; set; }  // propiedad de navegación
+
+    // FK hacia Book
+    public int BookId { get; set; }
+    public Book Book { get; set; }  // propiedad de navegación
+
+    public DateTime LoanDate { get; set; }
+    public bool IsReturned { get; set; }
+}`, explain: "<code>Loan</code> tiene <strong>relación con ambos</strong>: un usuario y un libro. <code>UserId</code>/<code>BookId</code> son las claves foráneas (FK). <code>User</code>/<code>Book</code> son las propiedades de navegación que EF usa para hacer JOINs automáticamente." },
+      { name: "Separación de responsabilidades", code: `// Models/ → solo datos
+public class Book { ... }
+
+// Controllers/ → solo lógica de flujo
+public class BooksController {
+    public IActionResult Index() { ... }
+    public IActionResult Create(...) { ... }
+}
+
+// Views/ → solo presentación
+// Books/Index.cshtml → muestra lista
+// Books/Create.cshtml → formulario`, explain: "Cada capa tiene <strong>una sola responsabilidad</strong>. El modelo no sabe de HTML. El controlador no sabe de SQL directamente. La vista no contiene lógica de negocio. Esto es el patrón MVC." },
+    ],
+    askPrompts: [
+      "¿Por qué Loan tiene tanto UserId como User en C#? ¿No es redundante?",
+      "Explícame qué es una propiedad de navegación y cómo EF la usa",
+    ]
+  },
+  {
+    id: 2,
+    title: "ASP.NET MVC",
+    badge: "badge-mvc",
+    badgeText: "Arquitectura web",
+    intro: "MVC divide tu aplicación en tres capas. El navegador nunca habla directo con la base de datos — todo pasa por el Controller.",
+    concepts: [
+      { name: "Models / Views / Controllers", code: `// Estructura de carpetas:
+// Models/
+//   Book.cs        ← datos
+//   User.cs
+//   Loan.cs
+// Views/
+//   Books/
+//     Index.cshtml  ← lista de libros
+//     Create.cshtml ← formulario
+// Controllers/
+//   BooksController.cs ← lógica
+
+// El flujo siempre es:
+// Request → Controller → Model/DB → View → Response`, explain: "<strong>Models</strong>: las clases que representan los datos. <strong>Views</strong>: el HTML que ve el usuario (con Razor). <strong>Controllers</strong>: reciben la petición, consultan la DB y mandan datos a la View." },
+      { name: "Routing", code: `// URL pattern por defecto:
+// https://sitio.com/{controller}/{action}/{id?}
+
+// Ejemplos reales:
+// /Books          → BooksController.Index()
+// /Books/Create   → BooksController.Create()
+// /Books/Edit/5   → BooksController.Edit(5)
+// /Loans/Delete/3 → LoansController.Delete(3)
+
+// Atributos de ruta (alternativa):
+[HttpGet("/libros/{id}")]
+public IActionResult Detalle(int id) { ... }`, explain: "El <strong>routing</strong> mapea una URL a un método del controller. Por convención, <code>/Books/Edit/5</code> llama automáticamente a <code>BooksController.Edit(id: 5)</code> sin configuración extra." },
+      { name: "Actions e IActionResult", code: `public class BooksController : Controller {
+
+    // GET: /Books → mostrar lista
+    public IActionResult Index() {
+        var libros = _context.Books.ToList();
+        return View(libros);  // manda datos a la view
+    }
+
+    // POST: /Books/Create → guardar nuevo libro
+    [HttpPost]
+    public IActionResult Create(Book book) {
+        _context.Books.Add(book);
+        _context.SaveChanges();
+        return RedirectToAction("Index"); // redirigir
+    }
+}`, explain: "<code>IActionResult</code> es lo que devuelve un action: puede ser <code>View()</code> (mostrar HTML), <code>RedirectToAction()</code> (redirigir), <code>NotFound()</code>, etc. El tipo de retorno es flexible." },
+      { name: "Model Binding", code: `// El formulario HTML envía esto:
+// POST /Books/Create
+// Body: Title=CleanCode&Author=Martin&IsAvailable=true
+
+// ASP.NET automáticamente mapea:
+[HttpPost]
+public IActionResult Create(Book book) {
+    // book.Title = "CleanCode"    ← viene del form
+    // book.Author = "Martin"      ← viene del form
+    // book.IsAvailable = true     ← viene del form
+    // ¡Sin código extra!
+    _context.Books.Add(book);
+    _context.SaveChanges();
+    return RedirectToAction("Index");
+}`, explain: "El <strong>Model Binding</strong> es magia de ASP.NET: toma los datos del formulario HTML y los convierte automáticamente en el objeto C# del parámetro. Los nombres de los campos HTML deben coincidir con las propiedades del modelo." },
+    ],
+    askPrompts: [
+      "¿Qué pasa exactamente cuando visito /Loans/Create en mi proyecto?",
+      "¿Cuál es la diferencia entre [HttpGet] y [HttpPost] en un mismo action?",
+    ]
+  },
+  {
+    id: 3,
+    title: "Razor Views",
+    badge: "badge-razor",
+    badgeText: "Vistas",
+    intro: "Razor mezcla HTML con C#. El símbolo @ es el puente entre ambos mundos. El servidor procesa el .cshtml y envía HTML puro al navegador.",
+    concepts: [
+      { name: "@model y datos", code: `@* En BooksController: *@
+@* return View(libros); → pasa List<Book> *@
+
+@* En Books/Index.cshtml: *@
+@model List<Book>   @* declara el tipo de datos *@
+
+<h1>Libros (@Model.Count)</h1>
+
+@* Model (con mayúscula) = los datos reales *@
+<p>Primer libro: @Model[0].Title</p>`, explain: "<code>@model</code> (minúscula) declara <strong>qué tipo de datos</strong> espera la view. <code>@Model</code> (mayúscula) accede a <strong>los datos reales</strong> enviados desde el controller." },
+      { name: "@foreach y @if", code: `@model List<Book>
+
+@foreach (var book in Model) {
+    <div class="card">
+        <h3>@book.Title</h3>
+        <p>@book.Author</p>
+
+        @if (book.IsAvailable) {
+            <span class="badge-green">Disponible</span>
+        } else {
+            <span class="badge-red">Prestado</span>
+        }
+    </div>
+}`, explain: "C# puro dentro de bloques <code>@{ }</code> o directo con <code>@</code>. <code>@foreach</code> itera la lista. <code>@if</code> condiciona el HTML. Todo se ejecuta en el servidor y genera HTML estático." },
+      { name: "Tag Helpers y formularios", code: `@model Book
+
+<form asp-action="Create" method="post">
+
+    <label asp-for="Title">Título</label>
+    <input asp-for="Title" />   @* name="Title" automático *@
+
+    <label asp-for="Author">Autor</label>
+    <input asp-for="Author" />
+
+    <button type="submit">Guardar</button>
+</form>
+
+@* asp-for genera: name, id, type correctos *@
+@* asp-action genera la URL del POST *@`, explain: "<strong>Tag Helpers</strong> (asp-for, asp-action) son helpers de Razor que generan el HTML correcto automáticamente. <code>asp-for=\"Title\"</code> genera <code>name=\"Title\" id=\"Title\"</code>, que es lo que necesita el Model Binding." },
+      { name: "_Layout.cshtml", code: `@* Views/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - Biblioteca</title>
+</head>
+<body>
+    <nav><!-- navbar común --></nav>
+
+    @RenderBody()  @* aquí va el contenido de cada view *@
+
+    <footer><!-- footer común --></footer>
+</body>
+</html>
+
+@* En cada view: *@
+@{
+    Layout = "_Layout";  // usa este layout
+    ViewData["Title"] = "Lista de libros";
+}`, explain: "El <strong>layout</strong> es la plantilla compartida (navbar, footer, estilos). <code>@RenderBody()</code> es el slot donde se inserta el contenido específico de cada view. Evita repetir HTML en cada página." },
+    ],
+    askPrompts: [
+      "¿Cómo paso datos adicionales desde el controller a la view además del modelo?",
+      "¿Qué es una Partial View y cuándo la usaría en mi proyecto?",
+    ]
+  },
+  {
+    id: 4,
+    title: "Entity Framework Core",
+    badge: "badge-ef",
+    badgeText: "ORM — Lo más importante",
+    intro: "EF Core es el puente entre tu código C# y la base de datos. En vez de escribir SQL manualmente, escribes C# y EF lo traduce. Tu DbContext es el punto central.",
+    concepts: [
+      { name: "DbContext y DbSet", code: `public class LibraryContext : DbContext {
+
+    // Cada DbSet<T> = una tabla en la DB
+    public DbSet<User> Users { get; set; }
+    public DbSet<Book> Books { get; set; }
+    public DbSet<Loan> Loans { get; set; }
+
+    public LibraryContext(DbContextOptions options)
+        : base(options) { }
+}
+
+// En el controller:
+public class BooksController : Controller {
+    private readonly LibraryContext _context;
+
+    public BooksController(LibraryContext context) {
+        _context = context;  // inyección de dependencias
+    }
+}`, explain: "<code>DbContext</code> es la conexión a la base de datos. <code>DbSet&lt;T&gt;</code> representa una tabla. Lo que en SQL es <code>SELECT * FROM Books</code>, en EF es <code>_context.Books.ToList()</code>." },
+      { name: "CRUD con EF", code: `// CREATE
+var book = new Book { Title = "Clean Code", Author = "Martin" };
+_context.Books.Add(book);
+_context.SaveChanges();  // ejecuta el INSERT
+
+// READ
+var todos = _context.Books.ToList();           // SELECT *
+var uno = _context.Books.Find(5);             // SELECT WHERE id=5
+var filtrado = _context.Books
+    .Where(b => b.IsAvailable)
+    .ToList();
+
+// UPDATE
+var book = _context.Books.Find(5);
+book.Title = "Nuevo título";
+_context.SaveChanges();  // ejecuta el UPDATE
+
+// DELETE
+var book = _context.Books.Find(5);
+_context.Books.Remove(book);
+_context.SaveChanges();  // ejecuta el DELETE`, explain: "<code>SaveChanges()</code> es donde EF <strong>realmente ejecuta el SQL</strong>. Todo lo que haces antes (Add, Remove, modificar propiedades) es preparación. Sin SaveChanges(), nada persiste." },
+      { name: "Relaciones con HasOne/HasMany", code: `protected override void OnModelCreating(ModelBuilder modelBuilder) {
+
+    // Loan pertenece a un User (muchos préstamos, un usuario)
+    modelBuilder.Entity<Loan>()
+        .HasOne(l => l.User)
+        .WithMany(u => u.Loans)
+        .HasForeignKey(l => l.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Loan pertenece a un Book
+    modelBuilder.Entity<Loan>()
+        .HasOne(l => l.Book)
+        .WithMany(b => b.Loans)
+        .HasForeignKey(l => l.BookId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Índice único: un user no puede tener el mismo libro dos veces activo
+    modelBuilder.Entity<Loan>()
+        .HasIndex(l => new { l.UserId, l.BookId })
+        .IsUnique();
+}`, explain: "<code>HasOne...WithMany</code> define la relación 1:N. <code>Restrict</code> evita borrar un usuario si tiene préstamos. <code>Cascade</code> borraría los préstamos automáticamente. El índice único previene duplicados." },
+      { name: "Include (eager loading)", code: `// SIN Include: solo trae Loans, User y Book son null
+var prestamos = _context.Loans.ToList();
+// prestamo.User = null ← problema!
+
+// CON Include: trae los objetos relacionados
+var prestamos = _context.Loans
+    .Include(l => l.User)   // JOIN con Users
+    .Include(l => l.Book)   // JOIN con Books
+    .ToList();
+
+// Ahora puedes navegar:
+// prestamo.User.Name → "Juan García"
+// prestamo.Book.Title → "Clean Code"`, explain: "<strong>Include</strong> le dice a EF que haga JOIN con las tablas relacionadas. Sin él, las propiedades de navegación (<code>User</code>, <code>Book</code>) serán null aunque existan en la DB." },
+    ],
+    askPrompts: [
+      "¿Qué diferencia hay entre Cascade y Restrict en OnDelete? ¿Cuándo usar cada uno?",
+      "¿Por qué necesito Include? ¿No debería EF traer todo automáticamente?",
+    ]
+  },
+  {
+    id: 5,
+    title: "Bases de datos MySQL",
+    badge: "badge-sql",
+    badgeText: "Backend real",
+    intro: "Aunque EF genera el SQL automáticamente, debes entender qué SQL produce. Si entiendes el SQL, entiendes qué hace EF Core.",
+    concepts: [
+      { name: "Tablas y tipos de datos", code: `CREATE TABLE Books (
+    BookId    INT          NOT NULL AUTO_INCREMENT,
+    Title     VARCHAR(200) NOT NULL,
+    Author    VARCHAR(100) NOT NULL,
+    IsAvailable BOOLEAN    DEFAULT TRUE,
+    CreatedAt DATETIME     DEFAULT NOW(),
+
+    PRIMARY KEY (BookId)
+);
+
+-- EF genera esto automáticamente desde tu clase Book
+-- Equivalencia:
+-- int     → INT
+-- string  → VARCHAR(max) o TEXT
+-- bool    → BOOLEAN / TINYINT(1)
+-- DateTime → DATETIME`, explain: "<code>PRIMARY KEY</code> identifica cada fila de forma única. <code>AUTO_INCREMENT</code> genera el ID automáticamente. EF mapea los tipos C# a tipos SQL equivalentes." },
+      { name: "Claves foráneas y relaciones", code: `CREATE TABLE Loans (
+    LoanId    INT      NOT NULL AUTO_INCREMENT,
+    UserId    INT      NOT NULL,    -- FK hacia Users
+    BookId    INT      NOT NULL,    -- FK hacia Books
+    LoanDate  DATETIME NOT NULL,
+    IsReturned BOOLEAN DEFAULT FALSE,
+
+    PRIMARY KEY (LoanId),
+
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+        ON DELETE RESTRICT,   -- no borrar user con préstamos
+    FOREIGN KEY (BookId) REFERENCES Books(BookId)
+        ON DELETE RESTRICT,   -- no borrar libro con préstamos
+
+    UNIQUE (UserId, BookId)   -- no duplicar préstamo activo
+);`, explain: "<code>FOREIGN KEY</code> crea integridad referencial: no puedes tener un préstamo con un <code>UserId</code> que no existe en la tabla Users. <code>ON DELETE RESTRICT</code> = error si intentas borrar el usuario. <code>UNIQUE</code> = índice único." },
+      { name: "Consultas básicas", code: `-- Todos los libros disponibles
+SELECT * FROM Books WHERE IsAvailable = TRUE;
+
+-- Préstamos activos con datos del usuario y libro
+SELECT l.LoanId, u.Name, b.Title, l.LoanDate
+FROM Loans l
+JOIN Users u ON l.UserId = u.UserId
+JOIN Books b ON l.BookId = b.BookId
+WHERE l.IsReturned = FALSE;
+
+-- Cuántos préstamos tiene cada usuario
+SELECT u.Name, COUNT(l.LoanId) AS TotalPrestamos
+FROM Users u
+LEFT JOIN Loans l ON u.UserId = l.UserId
+GROUP BY u.UserId, u.Name;`, explain: "Estos son los SELECTs que EF genera automáticamente cuando usas LINQ con <code>Include</code>. El <code>JOIN</code> une tablas. El <code>GROUP BY</code> agrupa para contar. Conocer SQL te ayuda a depurar cuando algo falla." },
+    ],
+    askPrompts: [
+      "¿Qué pasa en la base de datos si intento borrar un usuario que tiene préstamos con RESTRICT?",
+      "¿Cómo vería el SQL que EF está generando para una consulta específica?",
+    ]
+  },
+  {
+    id: 6,
+    title: "Relación EF Core ↔ SQL",
+    badge: "badge-ef",
+    badgeText: "Punto crítico",
+    intro: "Este es el tema que más separa a quienes entienden el stack de quienes solo copian código. EF no es magia: traduce C# a SQL de forma determinista.",
+    concepts: [
+      { name: "C# → SQL (traducción)", code: `// C# (LINQ)                    → SQL equivalente
+
+_context.Books.ToList()
+// SELECT * FROM Books
+
+_context.Books.Where(b => b.IsAvailable)
+// SELECT * FROM Books WHERE IsAvailable = 1
+
+_context.Books.Find(5)
+// SELECT * FROM Books WHERE BookId = 5 LIMIT 1
+
+_context.Loans
+    .Include(l => l.User)
+    .Include(l => l.Book)
+    .ToList()
+// SELECT l.*, u.*, b.*
+// FROM Loans l
+// JOIN Users u ON l.UserId = u.UserId
+// JOIN Books b ON l.BookId = b.BookId`, explain: "EF traduce LINQ a SQL. <code>Where</code> → <code>WHERE</code>. <code>Include</code> → <code>JOIN</code>. <code>OrderBy</code> → <code>ORDER BY</code>. La traducción es casi 1:1. Cuando LINQ falla, el error viene del SQL generado." },
+      { name: "Configuración → estructura DB", code: `// En C# (OnModelCreating):
+modelBuilder.Entity<Loan>()
+    .HasIndex(l => new { l.UserId, l.BookId })
+    .IsUnique();
+
+// EF genera en SQL:
+// ALTER TABLE Loans
+// ADD UNIQUE INDEX IX_Loans_UserId_BookId (UserId, BookId);
+
+// Si intentas insertar duplicado:
+// C#: lanza DbUpdateException
+// SQL: Duplicate entry '1-3' for key 'IX_Loans_UserId_BookId'`, explain: "Lo que configuras en <code>OnModelCreating</code> se refleja en la base de datos. <code>HasIndex().IsUnique()</code> crea un <code>UNIQUE INDEX</code>. <code>OnDelete(Restrict)</code> crea <code>ON DELETE RESTRICT</code> en el FK." },
+      { name: "Migraciones", code: `// 1. Crear migración (detecta cambios en modelos)
+dotnet ef migrations add AgregarCampoISBN
+
+// EF genera archivo: Migrations/xxx_AgregarCampoISBN.cs
+// Up() → SQL para aplicar el cambio
+// Down() → SQL para revertirlo
+
+// 2. Aplicar a la base de datos
+dotnet ef database update
+
+// Resultado en SQL:
+// ALTER TABLE Books ADD COLUMN ISBN VARCHAR(20);
+
+// Flujo completo:
+// Cambias clase C# → migrations add → database update → DB actualizada`, explain: "Las <strong>migraciones</strong> son el sistema de control de versiones de tu base de datos. Cada cambio en tus modelos C# se convierte en un script SQL que se puede aplicar o revertir." },
+    ],
+    askPrompts: [
+      "¿Por qué mi consulta con Include genera un JOIN y no múltiples SELECTs?",
+      "¿Qué pasa si modifico la base de datos directamente sin usar migraciones?",
+    ]
+  },
+  {
+    id: 7,
+    title: "Flujo CRUD completo",
+    badge: "badge-flow",
+    badgeText: "Ciclo completo",
+    intro: "El ciclo completo de una petición web. Si entiendes este flujo, puedes debuggear cualquier problema porque sabes exactamente dónde buscar.",
+    concepts: [
+      { name: "Flujo CREATE completo", code: `// PASO 1: Usuario abre /Loans/Create (GET)
+public IActionResult Create() {
+    ViewBag.Users = _context.Users.ToList();
+    ViewBag.Books = _context.Books
+        .Where(b => b.IsAvailable).ToList();
+    return View();  // muestra el formulario
+}
+
+// PASO 2: Usuario llena y envía el formulario (POST)
+[HttpPost]
+public IActionResult Create(Loan loan) {
+    // PASO 3: Model Binding ya llenó 'loan' con los datos del form
+    loan.LoanDate = DateTime.Now;
+    loan.IsReturned = false;
+
+    // PASO 4: EF guarda en DB
+    _context.Loans.Add(loan);
+    _context.Books.Find(loan.BookId).IsAvailable = false;
+    _context.SaveChanges();  // ejecuta INSERT + UPDATE
+
+    // PASO 5: Redirigir
+    return RedirectToAction("Index");
+}`, explain: "El <strong>patrón POST-Redirect-GET</strong>: el POST guarda y redirige, nunca retorna una View directamente (evita reenvíos accidentales del form). GET siempre muestra datos." },
+      { name: "Flujo READ con detalles", code: `// Controller: trae datos con relaciones
+public IActionResult Index() {
+    var loans = _context.Loans
+        .Include(l => l.User)   // necesario para l.User.Name
+        .Include(l => l.Book)   // necesario para l.Book.Title
+        .Where(l => !l.IsReturned)
+        .OrderBy(l => l.LoanDate)
+        .ToList();
+    return View(loans);
+}
+
+// View: usa los datos
+@foreach (var loan in Model) {
+    <tr>
+        <td>@loan.User.Name</td>    @* funciona por Include *@
+        <td>@loan.Book.Title</td>   @* funciona por Include *@
+        <td>@loan.LoanDate.ToString("dd/MM/yyyy")</td>
+    </tr>
+}`, explain: "Sin <code>Include</code>, <code>loan.User</code> sería <code>null</code> y obtendrías un NullReferenceException en la View. El Include es el puente entre el objeto C# y la tabla relacionada." },
+    ],
+    askPrompts: [
+      "¿Qué es el patrón POST-Redirect-GET y por qué es importante?",
+      "Si tengo un error 'Object reference not set', ¿en qué parte del flujo busco el problema?",
+    ]
+  },
+  {
+    id: 8,
+    title: "Validaciones y manejo de errores",
+    badge: "badge-valid",
+    badgeText: "Nivel medio",
+    intro: "Las validaciones protegen la integridad de tus datos. Los errores de la DB (duplicados, FK violadas) deben manejarse con gracia en vez de mostrar una pantalla de error.",
+    concepts: [
+      { name: "Data Annotations", code: `public class User {
+    public int UserId { get; set; }
+
+    [Required(ErrorMessage = "El nombre es obligatorio")]
+    [StringLength(100)]
+    public string Name { get; set; }
+
+    [Required]
+    [EmailAddress(ErrorMessage = "Email inválido")]
+    public string Email { get; set; }
+
+    [Range(0, 100)]
+    public int Age { get; set; }
+}`, explain: "Los <strong>Data Annotations</strong> son atributos que definen reglas de validación en el modelo. ASP.NET los valida automáticamente en el controller y los muestra en la view con tag helpers." },
+      { name: "ModelState y try-catch", code: `[HttpPost]
+public IActionResult Create(Loan loan) {
+
+    // Verificar validaciones del modelo
+    if (!ModelState.IsValid) {
+        return View(loan);  // re-muestra form con errores
+    }
+
+    try {
+        _context.Loans.Add(loan);
+        _context.SaveChanges();
+        return RedirectToAction("Index");
+    }
+    catch (DbUpdateException ex) {
+        // Error de DB: duplicado, FK violada, etc.
+        if (ex.InnerException?.Message.Contains("Duplicate") == true) {
+            ModelState.AddModelError("", "Este usuario ya tiene ese libro prestado.");
+        } else {
+            ModelState.AddModelError("", "Error al guardar. Intenta de nuevo.");
+        }
+        return View(loan);
+    }
+}`, explain: "<code>ModelState.IsValid</code> verifica todas las validaciones del modelo. Si falla, re-muestras el form. El <code>try-catch</code> atrapa errores de la base de datos como duplicados (<code>UNIQUE</code> violado) o FK violadas." },
+      { name: "Mostrar errores en la View", code: `@model Loan
+
+@* Resumen de todos los errores *@
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+
+    <label asp-for="UserId">Usuario</label>
+    <select asp-for="UserId" asp-items="..."></select>
+    <span asp-validation-for="UserId" class="text-danger"></span>
+
+    <label asp-for="BookId">Libro</label>
+    <select asp-for="BookId" asp-items="..."></select>
+    <span asp-validation-for="BookId" class="text-danger"></span>
+
+    <button type="submit">Crear préstamo</button>
+</form>`, explain: "<code>asp-validation-summary</code> muestra todos los errores. <code>asp-validation-for</code> muestra el error específico de un campo. Estos tag helpers leen automáticamente el <code>ModelState</code> del controller." },
+    ],
+    askPrompts: [
+      "¿Qué errores específicos de DB debería manejar en mi proyecto de biblioteca?",
+      "¿Cómo se relaciona ModelState.IsValid con los Data Annotations del modelo?",
+    ]
+  }
+];
+
+let currentTopic = 0;
+let selectedConcept = null;
+
+function showTopic(index) {
+  currentTopic = index;
+  selectedConcept = null;
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach((b, i) => b.classList.toggle('active', i === index));
+  const pct = Math.round((index + 1) / topics.length * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  render();
+}
+
+function render() {
+  const t = topics[currentTopic];
+  const area = document.getElementById('topic-area');
+  area.innerHTML = `
+    <div class="topic-card">
+      <div class="topic-title">${t.title}</div>
+      <span class="topic-badge ${t.badge}">${t.badgeText}</span>
+      <p class="explanation">${t.intro}</p>
+      <div class="section">
+        <div class="section-label">Conceptos — haz clic para ver código</div>
+        <div class="concept-grid">
+          ${t.concepts.map((c, i) => `<div class="concept-chip ${selectedConcept === i ? 'selected' : ''}" onclick="selectConcept(${i})">${c.name}</div>`).join('')}
+        </div>
+      </div>
+      <div class="detail-box ${selectedConcept !== null ? 'visible' : ''}" id="detail">
+        ${selectedConcept !== null ? renderConcept(t.concepts[selectedConcept]) : ''}
+      </div>
+      <div style="border-top: 0.5px solid var(--color-border-tertiary); padding-top: 1rem; margin-top: 0.5rem;">
+        <div class="section-label" style="margin-bottom: 8px;">Preguntas para profundizar</div>
+        ${t.askPrompts.map(p => `<button class="ask-btn" onclick="sendPrompt('${p.replace(/'/g, "\\'")}')">↗ ${p}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderConcept(c) {
+  return `
+    <div class="section-label">Ejemplo de código</div>
+    <div class="code-block">${c.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    <div class="section-label">¿Qué significa?</div>
+    <p class="explanation">${c.explain.replace(/`([^`]+)`/g, '<code style="font-family:var(--font-mono);font-size:11px;background:var(--color-background-secondary);padding:1px 4px;border-radius:3px;">$1</code>')}</p>
+  `;
+}
+
+function selectConcept(i) {
+  selectedConcept = selectedConcept === i ? null : i;
+  render();
+}
+
+showTopic(0);
+</script>
